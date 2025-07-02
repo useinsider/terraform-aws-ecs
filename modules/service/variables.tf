@@ -84,13 +84,13 @@ variable "deployment_controller" {
 variable "deployment_maximum_percent" {
   description = "Upper limit (as a percentage of the service's `desired_count`) of the number of running tasks that can be running in a service during a deployment"
   type        = number
-  default     = null
+  default     = 200
 }
 
 variable "deployment_minimum_healthy_percent" {
   description = "Lower limit (as a percentage of the service's `desired_count`) of the number of running tasks that must remain running and healthy in a service during a deployment"
   type        = number
-  default     = null
+  default     = 66
 }
 
 variable "desired_count" {
@@ -412,23 +412,24 @@ variable "task_definition_arn" {
 variable "container_definitions" {
   description = "A map of valid [container definitions](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html). Please note that you should only provide values that are part of the container definition document"
   type = map(object({
-    enable_execute_command  = optional(bool, false)
+    create                  = optional(bool, true)
     operating_system_family = optional(string, "LINUX")
     tags                    = optional(map(string), {})
 
     # Container definition
     command = optional(list(string))
     cpu     = optional(number)
-    depends_on = optional(list(object({
-      condition      = string
-      container_name = string
+    dependsOn = optional(list(object({
+      condition     = string
+      containerName = string
     })))
-    disable_networking    = optional(bool)
-    dnsSearchDomains      = optional(list(string))
-    dnsServers            = optional(list(string))
-    dockerLabels          = optional(map(string))
-    dockerSecurityOptions = optional(list(string))
-    entrypoint            = optional(list(string))
+    disableNetworking      = optional(bool)
+    dnsSearchDomains       = optional(list(string))
+    dnsServers             = optional(list(string))
+    dockerLabels           = optional(map(string))
+    dockerSecurityOptions  = optional(list(string))
+    enable_execute_command = optional(bool, false)
+    entrypoint             = optional(list(string))
     environment = optional(list(object({
       name  = string
       value = string
@@ -476,7 +477,12 @@ variable "container_definitions" {
         mountOptions  = optional(list(string))
         size          = number
       })))
-    }))
+      }),
+      # Default
+      {
+        initProcessEnabled = false
+      }
+    )
     logConfiguration = optional(object({
       logDriver = optional(string)
       options   = optional(map(string))
@@ -484,7 +490,10 @@ variable "container_definitions" {
         name      = string
         valueFrom = string
       })))
-    }))
+      }),
+      # Default
+      {}
+    )
     memory            = optional(number)
     memoryReservation = optional(number)
     mountPoints = optional(list(object({
@@ -515,7 +524,12 @@ variable "container_definitions" {
       enabled              = optional(bool, true)
       ignoredExitCodes     = optional(list(number))
       restartAttemptPeriod = optional(number)
-    }))
+      }),
+      # Default
+      {
+        enabled = true
+      }
+    )
     secrets = optional(list(object({
       name      = string
       valueFrom = string
@@ -540,7 +554,7 @@ variable "container_definitions" {
     workingDirectory = optional(string)
 
     # Cloudwatch Log Group
-    service                                = optional(string)
+    service                                = optional(string, "")
     enable_cloudwatch_logging              = optional(bool, true)
     create_cloudwatch_log_group            = optional(bool, true)
     cloudwatch_log_group_name              = optional(string)
@@ -554,24 +568,24 @@ variable "container_definitions" {
 
 variable "container_definition_defaults" {
   description = "A map of default values for [container definitions](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ContainerDefinition.html) created by `container_definitions`"
-  type = map(object({
-    enable_execute_command  = optional(bool, false)
+  type = object({
     operating_system_family = optional(string, "LINUX")
     tags                    = optional(map(string), {})
 
     # Container definition
     command = optional(list(string))
     cpu     = optional(number)
-    depends_on = optional(list(object({
-      condition      = string
-      container_name = string
+    dependsOn = optional(list(object({
+      condition     = string
+      containerName = string
     })))
-    disable_networking    = optional(bool)
-    dnsSearchDomains      = optional(list(string))
-    dnsServers            = optional(list(string))
-    dockerLabels          = optional(map(string))
-    dockerSecurityOptions = optional(list(string))
-    entrypoint            = optional(list(string))
+    disableNetworking      = optional(bool)
+    dnsSearchDomains       = optional(list(string))
+    dnsServers             = optional(list(string))
+    dockerLabels           = optional(map(string))
+    dockerSecurityOptions  = optional(list(string))
+    enable_execute_command = optional(bool, false)
+    entrypoint             = optional(list(string))
     environment = optional(list(object({
       name  = string
       value = string
@@ -619,7 +633,12 @@ variable "container_definition_defaults" {
         mountOptions  = optional(list(string))
         size          = number
       })))
-    }))
+      }),
+      # Default
+      {
+        initProcessEnabled = false
+      }
+    )
     logConfiguration = optional(object({
       logDriver = optional(string)
       options   = optional(map(string))
@@ -627,7 +646,10 @@ variable "container_definition_defaults" {
         name      = string
         valueFrom = string
       })))
-    }))
+      }),
+      # Default
+      {}
+    )
     memory            = optional(number)
     memoryReservation = optional(number)
     mountPoints = optional(list(object({
@@ -658,7 +680,12 @@ variable "container_definition_defaults" {
       enabled              = optional(bool, true)
       ignoredExitCodes     = optional(list(number))
       restartAttemptPeriod = optional(number)
-    }))
+      }),
+      # Default
+      {
+        enabled = true
+      }
+    )
     secrets = optional(list(object({
       name      = string
       valueFrom = string
@@ -683,7 +710,7 @@ variable "container_definition_defaults" {
     workingDirectory = optional(string)
 
     # Cloudwatch Log Group
-    service                                = optional(string)
+    service                                = optional(string, "")
     enable_cloudwatch_logging              = optional(bool, true)
     create_cloudwatch_log_group            = optional(bool, true)
     cloudwatch_log_group_name              = optional(string)
@@ -691,7 +718,7 @@ variable "container_definition_defaults" {
     cloudwatch_log_group_class             = optional(string)
     cloudwatch_log_group_retention_in_days = optional(number, 30)
     cloudwatch_log_group_kms_key_id        = optional(string)
-  }))
+  })
   default = {}
 }
 
@@ -1133,15 +1160,15 @@ variable "autoscaling_policies" {
         statistic = optional(string)
         unit      = optional(string)
       }))
+      disable_scale_in = optional(bool)
+      predefined_metric_specification = optional(object({
+        predefined_metric_type = string
+        resource_label         = optional(string)
+      }))
+      scale_in_cooldown  = optional(number, 300)
+      scale_out_cooldown = optional(number, 60)
+      target_value       = optional(number, 75)
     }))
-    disable_scale_in = optional(bool)
-    predefined_metric_specification = optional(object({
-      predefined_metric_type = string
-      resource_label         = optional(string)
-    }))
-    scale_in_cooldown  = optional(number, 300)
-    scale_out_cooldown = optional(number, 60)
-    target_value       = optional(number, 75)
   }))
   default = {
     cpu = {
@@ -1210,11 +1237,13 @@ variable "security_group_description" {
 variable "security_group_ingress_rules" {
   description = "Security group ingress rules to add to the security group created"
   type = map(object({
+    name = optional(string)
+
     cidr_ipv4                    = optional(string)
     cidr_ipv6                    = optional(string)
     description                  = optional(string)
     from_port                    = optional(string)
-    ip_protocol                  = optional(string)
+    ip_protocol                  = optional(string, "tcp")
     prefix_list_id               = optional(string)
     referenced_security_group_id = optional(string)
     tags                         = optional(map(string), {})
@@ -1226,11 +1255,13 @@ variable "security_group_ingress_rules" {
 variable "security_group_egress_rules" {
   description = "Security group egress rules to add to the security group created"
   type = map(object({
+    name = optional(string)
+
     cidr_ipv4                    = optional(string)
     cidr_ipv6                    = optional(string)
     description                  = optional(string)
     from_port                    = optional(string)
-    ip_protocol                  = optional(string)
+    ip_protocol                  = optional(string, "tcp")
     prefix_list_id               = optional(string)
     referenced_security_group_id = optional(string)
     tags                         = optional(map(string), {})

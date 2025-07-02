@@ -162,11 +162,10 @@ module "ecs_service" {
 
   subnet_ids = module.vpc.private_subnets
   security_group_ingress_rules = {
-    alb_http_ingress = {
-      from_port                = local.container_port
-      protocol                 = "tcp"
-      description              = "Service port"
-      source_security_group_id = module.alb.security_group_id
+    alb_http = {
+      from_port                    = local.container_port
+      description                  = "Service port"
+      referenced_security_group_id = module.alb.security_group_id
     }
   }
 
@@ -261,7 +260,7 @@ module "autoscaling" {
     ex_1 = {
       instance_type              = "t3.large"
       use_mixed_instances_policy = false
-      mixed_instances_policy     = {}
+      mixed_instances_policy     = null
       user_data                  = <<-EOT
         #!/bin/bash
 
@@ -284,16 +283,18 @@ module "autoscaling" {
           spot_allocation_strategy                 = "price-capacity-optimized"
         }
 
-        override = [
-          {
-            instance_type     = "m4.large"
-            weighted_capacity = "2"
-          },
-          {
-            instance_type     = "t3.large"
-            weighted_capacity = "1"
-          },
-        ]
+        launch_template = {
+          override = [
+            {
+              instance_type     = "m4.large"
+              weighted_capacity = "2"
+            },
+            {
+              instance_type     = "t3.large"
+              weighted_capacity = "1"
+            },
+          ]
+        }
       }
       user_data = <<-EOT
         #!/bin/bash

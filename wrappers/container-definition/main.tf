@@ -50,7 +50,7 @@ module "wrapper" {
     enabled = true
   })
   secrets            = try(each.value.secrets, var.defaults.secrets, null)
-  service            = try(each.value.service, var.defaults.service, "")
+  service            = try(each.value.service, var.defaults.service, null)
   startTimeout       = try(each.value.startTimeout, var.defaults.startTimeout, 30)
   stopTimeout        = try(each.value.stopTimeout, var.defaults.stopTimeout, 120)
   systemControls     = try(each.value.systemControls, var.defaults.systemControls, null)

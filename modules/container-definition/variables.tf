@@ -361,9 +361,9 @@ variable "workingDirectory" {
 ################################################################################
 
 variable "service" {
-  description = "The name of the service that the container definition is associated with"
+  description = "The name of the service that the container definition is associated with. Used in CloudWatch log group default name (if one is not provided)"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "enable_cloudwatch_logging" {

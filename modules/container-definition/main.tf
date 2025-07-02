@@ -5,7 +5,9 @@ data "aws_region" "current" {
 locals {
   is_not_windows = contains(["LINUX"], var.operating_system_family)
 
-  log_group_name = try(coalesce(var.cloudwatch_log_group_name, "/aws/ecs/${var.service}/${var.name}"), "")
+  service        = var.service != null ? "/${var.service}" : ""
+  name           = var.name != null ? "/${var.name}" : ""
+  log_group_name = try(coalesce(var.cloudwatch_log_group_name, "/aws/ecs${local.service}${local.name}"), "")
 
   logConfiguration = merge(
     {
