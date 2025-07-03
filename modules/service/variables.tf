@@ -183,7 +183,7 @@ variable "timeouts" {
 }
 
 variable "triggers" {
-  description = "Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `timestamp()`"
+  description = "Map of arbitrary keys and values that, when changed, will trigger an in-place update (redeployment). Useful with `plantimestamp()`"
   type        = any
   default     = {}
 }
@@ -432,6 +432,12 @@ variable "task_exec_iam_role_policies" {
   default     = {}
 }
 
+variable "task_exec_iam_role_max_session_duration" {
+  description = "Maximum session duration (in seconds) for ECS task execution role. Default is 3600."
+  type        = number
+  default     = null
+}
+
 variable "create_task_exec_policy" {
   description = "Determines whether the ECS task definition IAM policy should be created. This includes permissions included in AmazonECSTaskExecutionRolePolicy as well as access to secrets and SSM parameters"
   type        = bool
@@ -454,6 +460,12 @@ variable "task_exec_iam_statements" {
   description = "A map of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement) for custom permission usage"
   type        = any
   default     = {}
+}
+
+variable "task_exec_iam_policy_path" {
+  description = "Path for the iam role"
+  type        = string
+  default     = null
 }
 
 ################################################################################

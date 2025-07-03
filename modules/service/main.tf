@@ -97,7 +97,7 @@ resource "aws_ecs_service" "this" {
 
   dynamic "network_configuration" {
     # Set by task set if deployment controller is external
-    for_each = var.network_mode == "awsvpc" ? [{ for k, v in local.network_configuration : k => v if !local.is_external_deployment }] : []
+    for_each = var.network_mode == "awsvpc" && !local.is_external_deployment ? [local.network_configuration] : []
 
     content {
       assign_public_ip = network_configuration.value.assign_public_ip
@@ -201,7 +201,9 @@ resource "aws_ecs_service" "this" {
     delete = try(var.timeouts.delete, null)
   }
 
-  depends_on = [aws_iam_role_policy_attachment.service]
+  depends_on = [
+    aws_iam_role_policy_attachment.service
+  ]
 
   lifecycle {
     ignore_changes = [
@@ -283,7 +285,7 @@ resource "aws_ecs_service" "ignore_task_definition" {
 
   dynamic "network_configuration" {
     # Set by task set if deployment controller is external
-    for_each = var.network_mode == "awsvpc" ? [{ for k, v in local.network_configuration : k => v if !local.is_external_deployment }] : []
+    for_each = var.network_mode == "awsvpc" && !local.is_external_deployment ? [local.network_configuration] : []
 
     content {
       assign_public_ip = network_configuration.value.assign_public_ip
@@ -379,7 +381,7 @@ resource "aws_ecs_service" "ignore_task_definition" {
   wait_for_steady_state = var.wait_for_steady_state
 
   propagate_tags = var.propagate_tags
-  tags           = var.tags
+  tags           = merge(var.tags, var.service_tags)
 
   timeouts {
     create = try(var.timeouts.create, null)
@@ -387,7 +389,9 @@ resource "aws_ecs_service" "ignore_task_definition" {
     delete = try(var.timeouts.delete, null)
   }
 
-  depends_on = [aws_iam_role_policy_attachment.service]
+  depends_on = [
+    aws_iam_role_policy_attachment.service
+  ]
 
   lifecycle {
     ignore_changes = [
@@ -727,6 +731,12 @@ resource "aws_ecs_task_definition" "this" {
 
   tags = merge(var.tags, var.task_tags)
 
+  depends_on = [
+    aws_iam_role_policy_attachment.tasks,
+    aws_iam_role_policy_attachment.task_exec,
+    aws_iam_role_policy_attachment.task_exec_additional,
+  ]
+
   lifecycle {
     create_before_destroy = true
   }
@@ -767,6 +777,7 @@ resource "aws_iam_role" "task_exec" {
   description = coalesce(var.task_exec_iam_role_description, "Task execution role for ${local.task_exec_iam_role_name}")
 
   assume_role_policy    = data.aws_iam_policy_document.task_exec_assume[0].json
+  max_session_duration  = var.task_exec_iam_role_max_session_duration
   permissions_boundary  = var.task_exec_iam_role_permissions_boundary
   force_detach_policies = true
 
@@ -874,8 +885,8 @@ resource "aws_iam_policy" "task_exec" {
   name_prefix = var.task_exec_iam_role_use_name_prefix ? "${local.task_exec_iam_role_name}-" : null
   description = coalesce(var.task_exec_iam_role_description, "Task execution role IAM policy")
   policy      = data.aws_iam_policy_document.task_exec[0].json
-
-  tags = merge(var.tags, var.task_exec_iam_role_tags)
+  path        = var.task_exec_iam_policy_path
+  tags        = merge(var.tags, var.task_exec_iam_role_tags)
 }
 
 resource "aws_iam_role_policy_attachment" "task_exec" {
@@ -1183,7 +1194,7 @@ resource "aws_ecs_task_set" "ignore_task_definition" {
 locals {
   enable_autoscaling = local.create_service && var.enable_autoscaling && !local.is_daemon
 
-  cluster_name = element(split("/", var.cluster_arn), 1)
+  cluster_name = try(element(split("/", var.cluster_arn), 1), "")
 }
 
 resource "aws_appautoscaling_target" "this" {

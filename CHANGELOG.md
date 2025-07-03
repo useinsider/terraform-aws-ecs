@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.12.1](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.12.0...v5.12.1) (2025-04-18)
+
+
+### Bug Fixes
+
+* Ensure both ECS service definitions use the same settings/configurations ([#277](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/277)) ([6f4feab](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/6f4feaba42afcc3f233b41110d0b9ed204438843))
+
+## [5.12.0](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.11.4...v5.12.0) (2024-11-29)
+
+
+### Features
+
+* Allow task exec IAM policy to have an IAM path ([#243](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/243)) ([c9dc889](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/c9dc889a4b081105fb7567ca12a2d32ac36caa29))
+
+
+### Bug Fixes
+
+* Update CI workflow versions to latest ([#236](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/236)) ([fd0f0ec](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/fd0f0ecd7fd3a85d8d738320d37a22644b5f129a))
+
+## [5.11.4](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.11.3...v5.11.4) (2024-08-07)
+
+
+### Bug Fixes
+
+* Local `cluster_name` error when `var.cluster_arn` is empty ([#218](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/218)) ([42f11fe](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/42f11fe46b1f2a00125af0ee98813bff25d0bc46))
+
+## [5.11.3](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.11.2...v5.11.3) (2024-07-05)
+
+
+### Bug Fixes
+
+* Add missing `pid_mode` to root module ([#204](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/204)) ([c9cab6f](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/c9cab6f005379e25ee91d17c7b8d4cb9d8ca9af8))
+
+## [5.11.2](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.11.1...v5.11.2) (2024-05-31)
+
+
+### Bug Fixes
+
+* Make service, task, and task sets wait for their respective policy attachment to ensure permissions are available ([#201](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/201)) ([2033858](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/20338580482518fa086e90d9f74a54e8046fcb9a))
+
+## [5.11.1](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.11.0...v5.11.1) (2024-04-10)
+
+
+### Bug Fixes
+
+* Add aws to required providers ([#181](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/181)) ([59fd4fa](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/59fd4fa7b34daede721a27ba7fda44acfca8de29))
+
+## [5.11.0](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.10.1...v5.11.0) (2024-04-03)
+
+
+### Features
+
+* Allow configuring max_session_duration for the ECS Task Execution role ([#186](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/186)) ([1b8cad1](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/1b8cad10d2f414ecfdeb48e1dee73eccadefad1a))
+
+## [5.10.1](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.10.0...v5.10.1) (2024-04-01)
+
+
+### Bug Fixes
+
+* Dynamic network configuration in service module for external deployments with awsvpc networkmode ([#185](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/185)) ([c817ed9](https://github.com/terraform-aws-modules/terraform-aws-ecs/commit/c817ed992ed75d73a54f69bf130c3730af8ba709)), closes [#184](https://github.com/terraform-aws-modules/terraform-aws-ecs/issues/184)
+
 ## [5.10.0](https://github.com/terraform-aws-modules/terraform-aws-ecs/compare/v5.9.3...v5.10.0) (2024-03-12)
 
 

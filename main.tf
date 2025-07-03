@@ -109,6 +109,7 @@ module "service" {
   ipc_mode                      = try(each.value.ipc_mode, null)
   memory                        = try(each.value.memory, 2048)
   network_mode                  = try(each.value.network_mode, "awsvpc")
+  pid_mode                      = try(each.value.pid_mode, null)
   proxy_configuration           = try(each.value.proxy_configuration, {})
   requires_compatibilities      = try(each.value.requires_compatibilities, ["FARGATE"])
   runtime_platform = try(each.value.runtime_platform, {
@@ -129,6 +130,7 @@ module "service" {
   task_exec_iam_role_permissions_boundary = try(each.value.task_exec_iam_role_permissions_boundary, null)
   task_exec_iam_role_tags                 = try(each.value.task_exec_iam_role_tags, {})
   task_exec_iam_role_policies             = try(each.value.task_exec_iam_role_policies, {})
+  task_exec_iam_role_max_session_duration = try(each.value.task_exec_iam_role_max_session_duration, null)
 
   # Task execution IAM role policy
   create_task_exec_policy  = try(each.value.create_task_exec_policy, true)
